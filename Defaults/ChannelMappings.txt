@@ -1,0 +1,6 @@
+# Define channel mappings based on BearLab plexon default configurations
+# PlxRecOne: 16,18
+# PlxRecTwo: 0,2
+# Omniplex: 80,82
+37:LH
+39:RH
