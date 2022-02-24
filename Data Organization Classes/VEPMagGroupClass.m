@@ -31,6 +31,31 @@ classdef VEPMagGroupClass < groupDataRecordClass
            meanValue = mean(obj.getGroupData(varargin)); 
         end
         
+        function exportDataToFile(obj,outputFileName)
+            % Export raw and norm data to file
+            
+            % Open the file
+            fid = fopen(outputFileName,'Wb');
+            
+            fprintf(fid,'%s,ID,%s\n',class(obj),obj.ID);
+            [rawData,normData] = obj.getGroupData;
+            [cols,rows] = size(rawData);
+            % Write data
+            dataKeys = obj.getDataDescriptions;
+            for iR = 1:rows
+                for iC = 1:cols
+                    fprintf(fid,'%s,%f,%f',dataKeys{iR},rawData(iC,iR),normData(iC,iR));
+                    %if obj.normalizeData
+                    %    fprintf(fid,',%f',rawData(iC,iR));
+                    %end
+                end
+                fprintf(fid,'\n');
+            end
+            
+            fclose(fid);
+        end
+        
+        
     end
     
 end

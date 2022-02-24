@@ -1001,3 +1001,80 @@ function selectAnalysisType(figH,analysisType)
 handles = guidata(figH);
 setAnalysisType(figH,handles,analysisType);
 end
+
+
+function OutputStatsTable(handles,exportType,filename)
+% Quick hack to make export easily programmable
+% export type can be Table or Indexed
+
+if isa(handles,'double') || isa(handles,'matlab.ui.Figure')
+    handles = findHandles(handles);
+end
+
+% Get all selected data from the GUI
+vdo = getappdata(handles.figure1,'vdo');
+colNames = get(handles.selectionTable,'ColumnName');
+rowNames = get(handles.selectionTable,'RowName');
+tableData = get(handles.selectionTable,'Data');
+normFlag = strcmp(get(handles.normalizeMenu,'Checked'),'on');
+avgByAnimalFlag = strcmp(get(handles.avgByAnimalMenu,'Checked'),'on');
+showSrc = true;
+
+switch exportType
+    case 'Table'
+        outputType = 'Columns';
+        defaultName = 'StatTable_Cols.csv';
+    case 'Indexed'
+        outputType = 'Indexed';
+        defaultName = 'StatTable_Indexed.csv';
+    otherwise
+        errordlg(sprintf('Unknown export type error %s, should be Table or Indexed',exportType));
+        return
+end
+
+% Open output file
+fid = fopen(filename,'wb');
+
+% Send column selections row-wise to the export routine
+nR = length(rowNames);
+if nR == 0
+    nR = 1;
+    rowNames = {'Row1'};
+end
+% nC = length(colNames);
+for iR = 1:nR
+    if iR == 1
+        printHeader = true;
+    else
+        printHeader = false;
+    end
+    rowName = rowNames{iR};
+    grpKeys = tableData(iR,:);
+    generateStatsTableForGroups(vdo,...
+        grpKeys,'',rowName,printHeader,normFlag,avgByAnimalFlag,showSrc,...
+        fid,outputType,colNames);
+end
+fclose(fid);
+
+end
+
+
+function SetNormalize(handles, onOrOff)
+% Note: normalizeMenu is used for both normalization in the VEP magnitude
+% latency analysis and to set positive/negative latency in the latency
+% analysis    
+    
+if isa(handles,'double') || isa(handles,'matlab.ui.Figure')
+    handles = findHandles(handles);
+end
+hObject = handles.normalizeMenu;
+switch onOrOff
+    case 'on'
+        set(hObject,'Checked','off');
+    case 'off'
+        set(hObject,'Checked','on')
+    otherwise
+        error('onOrOff must be on or off');
+end
+normalizeMenu_Callback(hObject, [], handles);
+end

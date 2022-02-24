@@ -498,6 +498,18 @@ classdef (ConstructOnLoad) VEPDataClass < handle
       notify(obj,'GrpMgmtRefreshGUINeeded')
     end
     
+    function deleteGroup(obj,grpKey)
+        % Delete all of the groups
+        try
+            delete(obj.groupRecords(grpKey));
+            obj.groupRecords.remove(grpKey);
+        catch ME
+            handleError(ME,~obj.isHeadless,'VEPDataClass Error');
+        end
+        notify(obj,'RefreshGUINeeded')
+        notify(obj,'GrpMgmtRefreshGUINeeded')
+    end
+    
     % Data export methods ---------------------------------------------
     
     function exportDataToCSV(obj,exportDirectory) % pathname,filename)

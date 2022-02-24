@@ -29,10 +29,14 @@ classdef stimulusRecordClass < genericDataRecordClass
                 fid = 1;
             end
             fprintf(fid,'%sstimulusRecordClass: ID = ''%s'' [',offset,obj.ID);
-            for iE = 1:length(obj.eventValues) -1
-              fprintf(fid,'%i ',obj.eventValues(iE));
+            if ~isempty(obj.eventValues)
+                for iE = 1:length(obj.eventValues) -1
+                    fprintf(fid,'%i ',obj.eventValues(iE));
+                end
+                fprintf(fid,'%i] Channels: ',obj.eventValues(end));
+            else
+                fprintf(fid,'no event values]');
             end
-            fprintf(fid,'%i] Channels: ',obj.eventValues(end));
             channelKeys = obj.channelData.keys;
             for iC = 1:numel(channelKeys)
                 fprintf(fid,'''%s'' ',channelKeys{iC});
