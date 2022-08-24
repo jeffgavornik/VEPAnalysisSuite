@@ -1,7 +1,7 @@
 UNAME := $(shell uname)
 
 ifeq ($(UNAME),Darwin)
-MEX = /Applications/MATLAB_R2014b.app/bin/mex
+MEX = /Applications/MATLAB_R2022a.app/bin/mex
 #MEX = /Applications/MATLAB_R2015a.app/bin/mex
 INCLUDE_DIRS = -I/opt/local/include/libusb-1.0
 LIB_DIRS = -L/opt/local/lib -lusb-1.0 -lpthread
@@ -21,7 +21,8 @@ endif
 
 MEX_OPTS = -O
 EXTRA_LIBS =
-MEX_CMD = $(MEX) $(MEX_OPTS) $(INCLUDE_DIRS) $(LIB_DIRS) $(EXTRA_LIBS)
+#MEX_CMD = $(MEX) $(MEX_OPTS) $(INCLUDE_DIRS) $(LIB_DIRS) $(EXTRA_LIBS)
+MEX_CMD = $(MEX) $(MEX_OPTS) $(EXTRA_LIBS)
 
 all:	common units veps
 

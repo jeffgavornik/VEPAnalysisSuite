@@ -35,7 +35,8 @@ try
         dirSelect = mp(loc).DefaultValue;
         % disp(['vdo_populateInputFilterMenu: ' theClass ' ' menuString]);
         uimenu(dataMenu,'label',menuString,...
-            'Callback',@(src,event)vdo_addData_Callback(obj,extStr,promptStr,dirSelect));
+            'Callback',@(src,event)vdo_addData_Callback(obj,extStr,...
+            promptStr,dirSelect,mcls.Name));
         count = count + 1;
     end
     

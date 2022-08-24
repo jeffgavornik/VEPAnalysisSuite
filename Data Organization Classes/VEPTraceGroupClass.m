@@ -18,6 +18,7 @@ classdef VEPTraceGroupClass < groupDataRecordClass
                 grpTraces = cell(1,nKeys);
                 tTr = cell(1,nKeys);
                 dataKeys = cell(1,nKeys);
+                validAnimals = true(1,nKeys);
                 for iK = 1:nKeys
                     try
                         theKey = specifierKeys{iK};
@@ -27,7 +28,8 @@ classdef VEPTraceGroupClass < groupDataRecordClass
                     catch ME
                         errStr = sprintf('Group ''%s'' getData failure for %s\n%s',...
                             obj.ID,theKey,getReport(ME));
-                        warndlg(errStr);
+                        warning(errStr); %#ok<*SPWRN> 
+                        validAnimals(iK) = false;
                     end
                 end
                 tTr = tTr{1};
@@ -37,7 +39,7 @@ classdef VEPTraceGroupClass < groupDataRecordClass
                         checkArgsForValue('AverageByAnimal',varargin{:})
                     animalIDs = obj.getGroupAnimalIDs(true);
                     nA = length(animalIDs);
-                    averagedTraces = cell(1,nA);
+                    validAnimals = true(1,nA);
                     for iA = 1:nA
                         theID = animalIDs{iA};
                         summedTrace = zeros(nTr,1);
@@ -47,8 +49,13 @@ classdef VEPTraceGroupClass < groupDataRecordClass
                             if min(strfind(theKey,theID)) == 1
                                 loc = strfind(theKey,theID);
                                 fprintf('%s %s %i\n',theKey,theID,loc);
-                                summedTrace = summedTrace + grpTraces{iK};
-                                count = count + 1;
+                                if size(grpTraces{iK}) == size(summedTrace)
+                                    summedTrace = summedTrace + grpTraces{iK};
+                                    count = count + 1;
+                                else
+                                    fprintf(2,"Missing group data:"+theKey+"\n");
+                                    validAnimals(iA) = false;
+                                end
                             end
                         end
                         if count == 0
@@ -65,7 +72,7 @@ classdef VEPTraceGroupClass < groupDataRecordClass
                 errStr = sprintf(...
                     'VEPTraceGroupClass.getGroupData failed:\n%s',...
                     getReport(ME));
-                warndlg(errStr);
+                warning(errStr);
                 grpTraces = {};
                 tTr = {};
                 dataKeys = {};
@@ -76,10 +83,10 @@ classdef VEPTraceGroupClass < groupDataRecordClass
                 % return as a matrix if all cell elements have the same 
                 % number of elements
                 % consoildate tTr - TBD
-                grpTraces = cell2mat(grpTraces)';
+                grpTraces = cell2mat(grpTraces(validAnimals))';
             catch ME %#ok<NASGU>
-                errStr = fprintf('VEPTraceGroupClass: number of elements differs across traces. Returning cell arrays\n');
-                warndlg(errStr);
+                errStr = 'VEPTraceGroupClass: number of elements differs across traces. Returning cell arrays\n';
+                warning(errStr);
             end
         end
         

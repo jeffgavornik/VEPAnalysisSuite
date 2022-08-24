@@ -47,7 +47,9 @@ try
                 for iFile = 1:numel(files)
                     theFileName = files{iFile};
                     % TYPE SPECIFIC OBJECT CREATION HERE
-                    dataFileObj = plxFileDataClass(theFileName,thePath);
+                    dataFileObj = eval(sprintf('%s(''%s'',''%s'');',...
+                        objectCreateString,theFileName,thePath));
+                    %dataFileObj = plxFileDataClass(theFileName,thePath);
                     dataFileObj.registerForFileOwnerSupport(obj);
                     obj.addData(dataFileObj);
                 end
