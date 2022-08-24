@@ -42,11 +42,10 @@ try
             end
             
         case handles.openMenu
-            vdo_openSavedData_Callback(obj);
             [filename,filepath] = uigetfile('*.vdo','Select a VEP Data Object file',...
                 'MultiSelect', 'off');
             if ~(isequal(filename,0) || isequal(filepath,0)) % not cancel
-                obj.vdo_closeGUI;
+                %obj.vdo_closeGUI;
                 VEPDataClass.open(filename,filepath);
             end
             
